@@ -120,6 +120,7 @@ if selection == "Information":
 if selection == "About TEAM 7":
 	#st.info("TEAM 7")
 	st.write('TEAM 7 is a group of four members comprising of Thiyasize Khubeka, Warren Mnisi, Samuel Aina, and Tumelo Malebo')
+	st.text("Visit our Contact Page and lets get in touch!")
 
 
 #Building out the Contact Page
@@ -127,6 +128,7 @@ if selection == "Contact Us":
 	st.info("Lets get in touch for all your ML needs")
 	firstname = st.text_input("Enter your Name", "Type Here Please...")
 	lastname = st.text_input("Enter your last Name", "Type Here Please..")
+	contactDetails = st.text_input("Enter your contact details here", "Type Here Please...")
 	message = st.text_area("Tell us about your compaby's Data Science needs", "Type here Please..")
 	if st.button("Submit"):
 		result = message.title()
@@ -149,9 +151,9 @@ with st.beta_container():
 
 		option = st.selectbox(
 		'Which model would you like to use?',
-		('predictor1', 'SVC', 'Logisitic Regression', 'predictor4'))
+		('Kernel SVC Model', 'Linear SVC Model', 'Logisitic Regression Model'))
 
-		st.write('You selected the:', option)
+		st.write('You selected the: ', option)
 
 
 		if st.button("Classify"):
@@ -165,14 +167,14 @@ with st.beta_container():
 #options = ["predictor1, predictor2, predictor3, predictor4"]
 #selection = st.selectbox("Choose Option")
 
-#predictor1 = joblib.load(open(os.path.join("resources/pred2.pkl"),"rb"))
-VC = joblib.load(open(os.path.join("resources/team7_linear_svc_model.pkl"),"rb"))
+Kernel_SVC = joblib.load(open(os.path.join("resources/team7_kernel_svc_model.pkl"),"rb"))
+Linear_SVC = joblib.load(open(os.path.join("resources/team7_linear_svc_model.pkl"),"rb"))
 LR = joblib.load(open(os.path.join("resources/team7_logistic_regression_model.pkl"),"rb"))
 #predictor4 = joblib.load(open(os.path.join("resources/pred2.pkl"),"rb"))
 
-#prediction1 = predictor1.predict(vect_text)
-prediction2 = SVC.predict(vect_text)
-prediction3 = LR.predict(vect_text)
+prediction_1 = Kernel_SVC.predict(vect_text)
+prediction_2 = Linear_SVC.predict(vect_text)
+prediction_3 = LR.predict(vect_text)
 #prediction4 = predictor1.predict(vect_text)
 
 #If statements for selecting different models
@@ -180,44 +182,43 @@ prediction3 = LR.predict(vect_text)
 	#return prediction2
 #elif selection == 'Logistic Regression':
 	#return prediction3
-
-
-
-
 # When model has successfully run, will print prediction
 # You can use a dictionary or similar structure to make this output
 # more human interpretable.
 #st.success("Text Categorized as: {}".format(prediction))
 
-
-
-#news_html ="""  
-#<div style="background-color:#80ff80; padding:10px >
-#<h2 style="color:white;text-align:center;"> This tweet links to factual news about climate change</h2>
-#</div>
-#"""
-#pro_html ="""  
-#<div style="background-color:#F4D03F; padding:10px >
-#<h2 style="color:white;text-align:center;"> This tweet supports the belief of man-made climate climate</h2>
-#</div>
-#"""
-#neutral_html="""  
-#<div style="background-color:#F08080; padding:10px >
-#<h2 style="color:black ;text-align:center;">This tweet neither refutes or supports man-made climate change </h2>
-#</div>
-#"""
-#anti_html="""  
-#<div style="background-color:#F08080; padding:10px >
-#<h2 style="color:black ;text-align:center;"> This tweet does not believe in man-made climate change</h2>
-#</div>
-#"""
-
-if st.button("Classify the tweet") and st.radio("SVC"):
-    output = prediction2
-st.success('Tweet classification {}'.format(output))		
-if st.button("Classify the tweet") and st.radio("Logistic Regression"):
-	output  = prediction3
+if st.button("Classify the tweet") and st.selectbox("Kernel SVC"):
+    output = prediction_1
 st.success('Tweet classification {}'.format(output))
+if st.button("Classify the tweet") and st.selectbox("Linear SVC"):
+   	output = prediction_2
+st.success('Tweet classification {}'.format(output))
+if st.button("Classify the tweet") and st.selectbox("Logistic Regression"):
+	output = prediction_3
+st.success('Tweet classification {}'.format(output))
+
+
+news_html ="""  
+<div style="background-color:#80ff80; padding:10px >
+<h2 style="color:white;text-align:center;"> This tweet links to factual news about climate change</h2>
+</div>
+"""
+pro_html ="""
+<div style="background-color:#F4D03F; padding:10px >
+<h2 style="color:white;text-align:center;"> This tweet supports the belief of man-made climate climate</h2>
+</div>
+"""
+neutral_html="""  
+<div style="background-color:#F08080; padding:10px >
+<h2 style="color:black ;text-align:center;">This tweet neither refutes or supports man-made climate change </h2>
+</div>
+"""
+anti_html="""  
+<div style="background-color:#F08080; padding:10px >
+<h2 style="color:black ;text-align:center;"> This tweet does not believe in man-made climate change</h2>
+</div>
+"""
+
 
 		
 #elif st.button("Classify the tweet") and :
@@ -227,16 +228,16 @@ st.success('Tweet classification {}'.format(output))
 		
     	#elif st.button("Classify the tweet"):
         	#output = prediction = predictor1.predict(vect_text)
-        	#st.success('Tweet classification {}'.format(output))
+        #st.success('Tweet classification {}'.format(output))
 
-        #if output == 2:
-            #st.markdown(news_html,unsafe_allow_html=True)
-        #elif output == 1:
-           	# st.markdown(pro_html,unsafe_allow_html=True)
-		#elif output == 0:
-            #st.markdown(neutral_html,unsafe_allow_html=True)
-		#elif output == 1:
-            #st.markdown(anti_html,unsafe_allow_html=True)
+if output == 2:
+    st.markdown(news_html,unsafe_allow_html=True)
+elif output == 1:
+   	st.markdown(pro_html,unsafe_allow_html=True)
+elif output == 0:
+    st.markdown(neutral_html,unsafe_allow_html=True)
+elif output == 1:
+    st.markdown(anti_html,unsafe_allow_html=True)
 
 # Required to let Streamlit instantiate our web app.  
 if __name__ == '__main__':
