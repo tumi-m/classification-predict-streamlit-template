@@ -151,7 +151,7 @@ with st.beta_container():
 
 		option = st.selectbox(
 		'Which model would you like to use?',
-		('Kernel SVC Model', 'Linear SVC Model', 'Logisitic Regression Model'))
+		('Kernel SVC Model', 'Linear SVC Model', 'Logisitic Regression Model', 'Complement Naive Bayes'))
 
 		st.write('You selected the: ', option)
 
@@ -170,12 +170,13 @@ with st.beta_container():
 Kernel_SVC = joblib.load(open(os.path.join("resources/team7_kernel_svc_model.pkl"),"rb"))
 Linear_SVC = joblib.load(open(os.path.join("resources/team7_linear_svc_model.pkl"),"rb"))
 LR = joblib.load(open(os.path.join("resources/team7_logistic_regression_model.pkl"),"rb"))
+Complement_Naive_Bayes = joblib.load(open(os.path.join("resources/team7_complement_naive_bayes_model.pkl")
 #predictor4 = joblib.load(open(os.path.join("resources/pred2.pkl"),"rb"))
 
 prediction_1 = Kernel_SVC.predict(vect_text)
 prediction_2 = Linear_SVC.predict(vect_text)
 prediction_3 = LR.predict(vect_text)
-#prediction4 = predictor1.predict(vect_text)
+prediction_4 = Complement_Naive_Bayes.predict(vect_text)
 
 #If statements for selecting different models
 #if selection == 'SVC':
@@ -196,6 +197,10 @@ st.success('Tweet classification {}'.format(output))
 if st.button("Classify the tweet") and st.selectbox("Logistic Regression"):
 	output = prediction_3
 st.success('Tweet classification {}'.format(output))
+if st.button("Classify the tweet") and st.selectbox("Complement Naive Bayes"):
+	output = prediction_4
+st.success('Tweet classification {}'.format(output))
+
 
 
 news_html ="""  
