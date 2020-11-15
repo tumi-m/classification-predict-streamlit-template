@@ -184,7 +184,7 @@ def main():
 			'Which model would you like to use?',
 			('Kernel SVC Model', 'Linear SVC Model', 'Logisitic Regression Model', 'Complement Naive Bayes Model'))
 
-		st.write('You selected the:', options)
+		st.write('You selected the :', options)
   
 		if st.button("Classify"):
 		# Transforming user input with vectorizer
