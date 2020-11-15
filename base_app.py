@@ -41,7 +41,7 @@ st.set_page_config(
 
 
 # Vectorizer
-news_vectorizer = open("resources/tfidfvect.pkl","rb")
+news_vectorizer = open("resources/team7_vectorizer.pkl","rb")
 tweet_cv = joblib.load(news_vectorizer) # loading your vectorizer from the pkl file
 
 # Load your raw data
@@ -71,12 +71,12 @@ def main():
     	<h2 style="color:white;text-align:center;">TEAM 7 Tweet classification ML App </h2>
     	</div>
     	"""
-	#st.markdown(html_temp, unsafe_allow_html = True)
+	st.markdown(html_temp, unsafe_allow_html = True)
 
 
 	#image
 	
-	image = Image.open('resources/imgs/Quiver.jpg')
+	image = Image.open('resources/imgs/Quiver1.jpg')
 
 	st.image(image,use_column_width=True)
 	
@@ -102,7 +102,7 @@ def main():
 	<style>
 	.sidebar .sidebar-content {
 	background-image: linear-gradient(#025246, #025246);
-	color: white;
+	font color: white;
 	}
 	</style>
 	""",
@@ -129,11 +129,34 @@ def main():
 		st.subheader("Raw Twitter data and label")
 		if st.checkbox('Show raw data'): # data is hidden if box is unchecked
 				st.write(raw[['sentiment', 'message']]) # will write the df to the page
+    
+    
+    #Building out the Insights page
+    #if selection == "Insights":
+    	#st.subheader("Tweet distribution")
+        
+    #style.use('seaborn-pastel')
+	#fig, axes = plt.subplots(ncols=2, 
+                         	#nrows=1, 
+                         	#figsize=(16, 8), 
+                         	#dpi=100)
+		#sns.countplot(train_eda['sentiment'], ax=axes[0])
+
+		#labels=['Pro', 'News', 'Neutral', 'Anti'] 
+		#axes[1].pie(train_eda['sentiment'].value_counts(),
+            #autopct='%1.0f%%',
+            #labels=labels,
+            #startangle=90,
+            #explode = (0.1, 0.1, 0.1, 0.1),
+            #shadow=True
+           #)
+		#fig.suptitle('Distribution of Tweets per Sentiment Group', fontsize=18)
+		#plt.show()
 
 	#Building out the About Page
 	if selection == "About Team 7":
 	#st.info("TEAM 7")
-		st.subheader("TEAM 7 is a group of four members comprising of Thiyasize Khubeka, Warren Mnisi, Samuel Aina, and Tumelo Malebo")
+		st.subheader("TEAM 7 is a group of four members from EDSA comprising of Thiyasize Khubeka, Warren Mnisi, Samuel Aina, and Tumelo Malebo")
 		st.subheader("Visit our Contact Page and lets get in touch!")
 
 
@@ -162,74 +185,36 @@ def main():
 			('Kernel SVC Model', 'Linear SVC Model', 'Logisitic Regression Model', 'Complement Naive Bayes Model'))
 
 		st.write('You selected the:', options)
-		
+  
+		if st.button("Classify"):
 		# Transforming user input with vectorizer
-		vect_text = tweet_cv.transform([tweet_text]).toarray()
-		# Try loading in multiple models to give the user a choice
-		#options = ["predictor1, predictor2, predictor3, predictor4"]
-		#selection = st.selectbox("Choose Option")
-
-		Kernel_SVC = joblib.load(open(os.path.join("resources/team7_kernel_svc_model.pkl"),"rb"))
-		prediction_1 = Kernel_SVC.predict(vect_text)
-		Linear_SVC = joblib.load(open(os.path.join("resources/team7_linear_svc_model.pkl"),"rb"))
-		prediction_2 = Linear_SVC.predict(vect_text)
-		LR = joblib.load(open(os.path.join("resources/team7_logistic_regression_model.pkl"),"rb"))
-		prediction_3 = LR.predict(vect_text)
-		Complement_Naive_Bayes = joblib.load(open(os.path.join("resources/team7_complement_naive_bayes_model.pkl"), "rb"))
-		prediction_4 = Complement_Naive_Bayes.predict(vect_text)
-
-		if st.selectbox('Kernel SVC Model') and st.button('Classify'):
-     				return prediction_1
-		st.success('Tweet classification {}'.format(output))
-		if st.selectbox('Linear SVC Model') and st.button('Classify'):
-     				return prediction_2
-		st.success('Tweet classification {}'.format(output))
-		if st.selectbox('Logisitic Regression Model') and st.button('Classify'):
-    				return prediction_3
-		st.success('Tweet classification {}'.format(output))
-		if st.selectbox('Complement Naive Bayes Model') and st.button('Classify'):
-      				return prediction_4
-		st.success('Tweet classification {}'.format(output))
-       
-
-		#news_html ="""  
-		#<div style="background-color:#80ff80; padding:10px >
-		#<h2 style="color:white;text-align:center;"> This tweet links to factual news about climate change</h2>
-		#</div>
-		#"""
-		#pro_html ="""
-		#<div style="background-color:#F4D03F; padding:10px >
-		#<h2 style="color:white;text-align:center;"> This tweet supports the belief of man-made climate climate</h2>
-		#</div>
-		#"""
-		#neutral_html="""  
-		#<div style="background-color:#F08080; padding:10px >
-		#<h2 style="color:black ;text-align:center;">This tweet neither refutes or supports man-made climate change </h2>
-		#/div>
-		#"""
-		#anti_html="""  
-		#<div style="background-color:#F08080; padding:10px >
-		#<h2 style="color:black ;text-align:center;"> This tweet does not believe in man-made climate change</h2>
-		#</div>
-		#"""
-
-
+			vect_text = tweet_cv.transform([tweet_text]).toarray()
+			# Try loading in multiple models to give the user a choice
+			#options = ["predictor1, predictor2, predictor3, predictor4"]
 		
-		#elif st.button("Classify the tweet") and :
-    	#output = prediction = predictor1.predict(vect_text)
-    	#st.success('Tweet classification {}'.format(output))
-    	#elif st.button("Classify the tweet"):
-    	#output = prediction = predictor1.predict(vect_text)
-    	#st.success('Tweet classification {}'.format(output))
 
-		#if output == 2:
-    		#st.markdown(news_html,unsafe_allow_html=True)
-		#elif output == 1:
-    		#st.markdown(pro_html,unsafe_allow_html=True)
-		#elif output == 0:
-    		#st.markdown(neutral_html,unsafe_allow_html=True)
-		#elif output == 1:
-    		#st.markdown(anti_html,unsafe_allow_html=True)
+			Kernel_SVC = joblib.load(open(os.path.join("resources/team7_kernel_svc_model.pkl"),"rb"))
+			prediction_1 = Kernel_SVC.predict(vect_text)
+			Linear_SVC = joblib.load(open(os.path.join("resources/team7_linear_svc_model.pkl"),"rb"))
+			prediction_2 = Linear_SVC.predict(vect_text)
+			LR = joblib.load(open(os.path.join("resources/team7_logistic_regression_model.pkl"),"rb"))
+			prediction_3 = LR.predict(vect_text)
+			Complement_Naive_Bayes = joblib.load(open(os.path.join("resources/team7_complement_naive_bayes_model.pkl"), "rb"))
+			prediction_4 = Complement_Naive_Bayes.predict(vect_text)
+
+			if st.selectbox('Kernel SVC Model') and st.button('Classify'):
+     					return prediction_1
+			st.success("Text Categorized as: {}".format(prediction_1))
+			if st.selectbox('Linear SVC Model') and st.button('Classify'):
+     					return prediction_2
+			st.success("Text Categorized as: {}".format(prediction_2))
+			if st.selectbox('Logisitic Regression Model') and st.button('Classify'):
+    					return prediction_3
+			st.success("Text Categorized as: {}".format(prediction_3))
+			if st.selectbox('Complement Naive Bayes Model') and st.button('Classify'):
+      					return prediction_4
+			st.success("Text Categorized as: {}".format(prediction_3))
+		
 
 # Required to let Streamlit instantiate our web app.  
 if __name__ == '__main__':
