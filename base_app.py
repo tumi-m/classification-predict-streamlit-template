@@ -87,7 +87,7 @@ def main():
 		#Building out the "Insights" page   
 		if selection == "Insights":
 				st.warning("Please view the visualations and see how insightful the raw dataset became!")
-    
+				#visualize the most used words in wordcloud
 		   		if st.checkbox("Word cloud for pro and news"):
 						st.subheader("Most used words per each sentiment")
 						st.image('resources/Word_cloud_pro_and_news.PNG', channels="BGR")
@@ -150,7 +150,7 @@ def main():
 				st.info("Lets get in touch for all your ML needs")
 				firstname = st.text_input("Enter your Name", "Type Here Please...")
 				lastname = st.text_input("Enter your last Name", "Type Here Please..")
-				 = st.text_input("Enter your contact details here", "Type Here Please...")
+				contactdetails = st.text_input("Enter your contact details here", "Type Here Please...")
 				message = st.text_area("Tell us about your compaby's Data Science needs", "Type here Please..")
   
 				if st.button("Submit"):
