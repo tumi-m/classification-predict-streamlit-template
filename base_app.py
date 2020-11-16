@@ -24,6 +24,9 @@ import numpy as np
 #import plotly
 import matplotlib.pyplot as plt
 import seaborn as sns
+import string
+import re
+import os
 #from pathlib import Pathpip
 
 # Pickle dependencies
@@ -41,7 +44,7 @@ st.set_page_config(
 
 
 # Vectorizer
-news_vectorizer = open("resources/team7_vectorizer.pkl","rb")
+news_vectorizer = open("resources/team7_vectorizer.pkl", "rb")
 tweet_cv = joblib.load(news_vectorizer) # loading your vectorizer from the pkl file
 
 # Load your raw data
@@ -72,7 +75,7 @@ def main():
     	</div>
     	"""
 	st.markdown(html_temp, unsafe_allow_html = True)
-
+	st.markdown('<style>body{background-color: #CECEF6;}</style>',unsafe_allow_html=True)
 
 	#image
 	
@@ -95,12 +98,12 @@ def main():
 	
 	# Creating sidebar with selection box -
 	# you can create multiple pages this way
-	options = ["Prediction", "Information", "Insights", "About Team 7", "Contact Us"]
-	selection = st.sidebar.selectbox("Please selection an option", options)
+	options = ["Background", "Insights", "Prediction", "About Team 7", "Contact Us"]
+	selection = st.sidebar.selectbox("Please select an option", options)
 	st.markdown(
 	"""
 	<style>
-	.sidebar .sidebar-content {
+	.sidebar .sidebar-content{
 	background-image: linear-gradient(#025246, #025246);
 	font color: white;
 	}
@@ -109,54 +112,88 @@ def main():
 	unsafe_allow_html=True,
 	)
 
-	#Building out the "Information" page
-	if selection == "Information":
+	#Building out the "Insights" page
+	if selection == "Insights":
 		st.info("General Information")
-		# You can read a markdown file from supporting resources folder
-		#dict_check = st.checkbox("Data Dictionary")
-		#dict_markdown = read_markdown_file("resources/info.md")
+		
+		options = st.selectbox(
+			'Which visualisation would you like to view?',
+			('Distribution of Tweets per Sentiment Group', 'Most Occuring Words by Sentiment', 'Logisitic Regression Model', 'Complement Naive Bayes Model'))
 
-		#if dict_check:
-    			#st.markdown(dict_markdown, unsafe_allow_html=True)
-				#st.markdown("resources/info.md", unsafe_allow_html=True)
+		st.write('You selected the :', options)
+  
+		st.cache(suppress_st_warning=True,allow_output_mutation=True)
+		def most_occuring_words(df):
+			news = train_eda[train_eda['sentiment'] == 2]['message'].str.join(' ')
+			pos = train_eda[train_eda['sentiment'] == 1]['message'].str.join(' ')
+			neutral = train_eda[train_eda['sentiment'] == 0]['message'].str.join(' ')
+			neg = train_eda[train_eda['sentiment'] ==-1]['message'].str.join(' ')
+   
+   
+			
+			#reating individual wordclouds per sentiment
+			fig, axs = plt.subplots(2, 2, figsize = (20, 12))
+
+			news_wordcloud = WordCloud(width=900, height=600, background_color='white', colormap='winter').generate(str(news))
+			axis[0, 0].imshow(news)
+			axis[0, 0].set_title('News', fontsize = 16)
+			axis[0, 0].axis('off')
+
+			pro_wordcloud = WordCloud(width=900, height=600, background_color='white', colormap='winter', min_font_size=10).generate(str(pro))
+			axis[0, 1].imshow(pos)
+			axis[0, 1].set_title('Pro ', fontsize = 16)
+			axis[0, 1].axis('off')
+
+			anti_wordcloud = WordCloud(width=900, height=600, background_color='white', colormap='winter', min_font_size=10).generate(str(anti))
+			axis[1, 0].imshow(neg)
+			axis[1, 0].set_title('Anti', fontsize = 16)	
+			axis[1, 0].axis('off')
+
+			neutral_wordcloud = WordCloud(width=900, height=600, background_color='white', colormap='winter', min_font_size=10).generate(str(neutral))
+			axis[1, 1].imshow(neutral)
+			axis[1, 1].set_title('Neutral ', fontsize = 16)
+			axis[1, 1].axis('off')
+
+			st.pyplot(fig)
+
+			st.subheader("Raw Twitter data and label")
+			#if st.checkbox('Show raw data'): # data is hidden if box is unchecked
+   
+			st.cache(suppress_st_warning=True,allow_output_mutation=True)
+			colors = ["Purple", "Brown", "Green", "Blue"]
+			sns.set_palette(sns.color_palette(colors))
+
+			fig, axes = plt.subplots(ncols=1,
+                         			nrows=1,
+                         			figsize=(10, 6),
+                         			dpi=100)
+			#sns.countplot(train_eda['sentiment'], ax=axes[0])
+
+			axes.pie(train_eda['sentiment'].value_counts(),
+            			autopct='%1.0f%%',
+            			labels=labels,
+            			startangle=90,
+            			explode=(0.1, 0.1, 0.1, 0.1),
+            			shadow=True
+            			)
+			fig.suptitle('Distribution of Tweets per Sentiment Group', fontsize=18)
+			st.pyplot()
+
+			st.subheader("Raw Twitter data and label")
+			if st.checkbox('Show raw data'): # data is hidden if box is unchecked
+					st.write(raw[['sentiment', 'message']]) # will write the df to the page
     
-		#def read_markdown_file(markdown_file):
-    			#return Path(markdown_file).read_text()
 
-		#intro_markdown = read_markdown_file("introduction.md")
-		#st.markdown(intro_markdown, unsafe_allow_html=True)
 
-		st.subheader("Raw Twitter data and label")
-		if st.checkbox('Show raw data'): # data is hidden if box is unchecked
-				st.write(raw[['sentiment', 'message']]) # will write the df to the page
-    
-    
-    #Building out the Insights page
-    #if selection == "Insights":
-    	#st.subheader("Tweet distribution")
-        
-    #style.use('seaborn-pastel')
-	#fig, axes = plt.subplots(ncols=2, 
-                         	#nrows=1, 
-                         	#figsize=(16, 8), 
-                         	#dpi=100)
-		#sns.countplot(train_eda['sentiment'], ax=axes[0])
+    #Building out the Background
+	if selection == "Background":
+        st.header("We were tasked with developing a robust classification model based on users historical tweet data, that can predict their perception in a companys products and services')
 
-		#labels=['Pro', 'News', 'Neutral', 'Anti'] 
-		#axes[1].pie(train_eda['sentiment'].value_counts(),
-            #autopct='%1.0f%%',
-            #labels=labels,
-            #startangle=90,
-            #explode = (0.1, 0.1, 0.1, 0.1),
-            #shadow=True
-           #)
-		#fig.suptitle('Distribution of Tweets per Sentiment Group', fontsize=18)
-		#plt.show()
+
 
 	#Building out the About Page
 	if selection == "About Team 7":
-	#st.info("TEAM 7")
-		st.subheader("TEAM 7 is a group of four members from EDSA comprising of Thiyasize Khubeka, Warren Mnisi, Samuel Aina, and Tumelo Malebo")
+		st.subheader("TEAM 7 is a group of four members from EDSA comprising of Thiyasize Kubeka, Warren Mnisi, Samuel Aina, and Tumelo Malebo")
 		st.subheader("Visit our Contact Page and lets get in touch!")
 
 
@@ -173,51 +210,84 @@ def main():
 		st.success(result)
 
 
-
-	#with st.beta_container()
 	if selection == "Prediction":
 	#st.info("Prediction with ML Models")
 	# Creating a text box for user input
-		tweet_text = st.text_area("Enter Text","Type Here")
-
 		options = st.selectbox(
 			'Which model would you like to use?',
-			('Kernel SVC Model', 'Linear SVC Model', 'Logisitic Regression Model', 'Complement Naive Bayes Model'))
+			('KNN Model', 'Linear SVC Model', 'Complement Naive Bayes Model'))
 
 		st.write('You selected the :', options)
-  
-		if st.button("Classify"):
-		# Transforming user input with vectorizer
-			vect_text = tweet_cv.transform([tweet_text]).toarray()
-			# Try loading in multiple models to give the user a choice
-			#options = ["predictor1, predictor2, predictor3, predictor4"]
 		
 
-			Kernel_SVC = joblib.load(open(os.path.join("resources/team7_kernel_svc_model.pkl"),"rb"))
-			prediction_1 = Kernel_SVC.predict(vect_text)
-			Linear_SVC = joblib.load(open(os.path.join("resources/team7_linear_svc_model.pkl"),"rb"))
-			prediction_2 = Linear_SVC.predict(vect_text)
-			LR = joblib.load(open(os.path.join("resources/team7_logistic_regression_model.pkl"),"rb"))
-			prediction_3 = LR.predict(vect_text)
-			Complement_Naive_Bayes = joblib.load(open(os.path.join("resources/team7_complement_naive_bayes_model.pkl"), "rb"))
-			prediction_4 = Complement_Naive_Bayes.predict(vect_text)
 
-			if st.selectbox('Kernel SVC Model') and st.button('Classify'):
-     					return prediction_1
-			st.success("Text Categorized as: {}".format(prediction_1))
-			if st.selectbox('Linear SVC Model') and st.button('Classify'):
-     					return prediction_2
-			st.success("Text Categorized as: {}".format(prediction_2))
-			if st.selectbox('Logisitic Regression Model') and st.button('Classify'):
-    					return prediction_3
-			st.success("Text Categorized as: {}".format(prediction_3))
-			if st.selectbox('Complement Naive Bayes Model') and st.button('Classify'):
-      					return prediction_4
-			st.success("Text Categorized as: {}".format(prediction_3))
+		if options == 'KNN Model':
+				st.warning("KNN or K-nearest Neighbors Classifiers algorithm assumes that similar things exist in close proximity. In other words, similar things are near to each other")
+				# Creating a text box for user input
+				user_text = st.text_area("Enter Text","Type Here")
+
+				if st.button("Classify"):
+					# Transforming user input with vectorizer
+					#vect_text = tweet_cv.fit_transform([tweet_text]).toarray()
+					KNN= joblib.load(open(os.path.join("resources/team7_KNN.pkl"),"rb"))
+					prediction = KNN.predict([user_text])
+					st.success("Text Categorized as : {}".format(prediction))
+
+					if prediction[0] == 2:
+						st.info('This tweet links to factual news about climate change')
+					if prediction[0] == 1:
+						st.success('Tweet support the believe of man-made climate change')
+					if prediction[0] == 0:
+						st.warning('Tweet neither supports nor refutes the believe of man-made climate change')
+					if prediction[0] == -1:
+						st.error('Tweet does not believe in man-made climate change')
+      
 		
+		if options == 'Linear SVC Model':
+				st.warning("A linear SVM model is a representation of the examples as points in space, mapped so that the examples of the separate categories are divided by a clear gap that is as wide as possible. New examples are then mapped into that same space and predicted to belong to a category based on the side of the gap on which they fall.")
+				# Creating a text box for user input
+				user_text = st.text_area("Enter Text","Type Here")
+				
 
+				if st.button("Classify"):
+					# Transforming user input with vectorizer
+					#vect_text = tweet_cv.fit_transform([tweet_text]).toarray()
+					Linear_SVC = joblib.load(open(os.path.join("resources/team7_linear_svc.pkl"),"rb"))
+					prediction = Linear_SVC.predict([user_text])
+					st.success("Text Categorized as : {}".format(prediction))
+
+					if prediction[0] == 2:
+						st.info('Tweet links factual news about climate change')
+					if prediction[0] == 1:
+						st.success('Tweet support the believe of man-made climate change')
+					if prediction[0] == 0:
+						st.warning('Tweet neither supports nor refutes the believe of man-made climate change')
+					if prediction[0] == -1:
+						st.error('Tweet does not believe in man-made climate change')
+      
+
+        
+		if options == 'Complement Naive Bayes Model':
+				st.warning("Complement Naive Bayes is particularly suited to work with imbalanced datasets. In complement Naive Bayes, instead of calculating the probability of an item belonging to a certain class, we calculate the probability of the item belonging to all the classes.")
+				# Creating a text box for user input
+				user_text = st.text_area("Enter Text","Type Here")
+				
+				if st.button("Classify"):
+				# Transforming user input with vectorizer
+				#vect_text = tweet_cv.fit_transform([tweet_text]).toarray()
+					LR = joblib.load(open(os.path.join("resources/team7_complement_naive_bayes_model.pkl"),"rb"))
+					prediction = LR.predict([user_text])
+					st.success("Text Categorized as : {}".format(prediction))
+
+					if prediction[0] == 2:
+							st.info('This tweet links to factual news about climate change')
+					if prediction[0] == 1:
+							st.success('This tweet supports the belief of man-made climate climate')
+					if prediction[0] == 0:
+							st.warning('This tweet neither refutes or supports man-made climate change')
+					if prediction[0] == -1:
+							st.error(' This tweet does not believe in man-made climate change')
+      
 # Required to let Streamlit instantiate our web app.  
 if __name__ == '__main__':
 	main()
-
-
